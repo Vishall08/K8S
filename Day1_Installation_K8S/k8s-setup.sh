@@ -76,23 +76,18 @@ echo "[✅ DONE] Kubernetes components installed. Reboot is recommended before i
 # Execute these steps ONLY on the Master node
 # --------------------------------------
 
-echo
-read -p "🧠 Do you want to initialize the Kubernetes master node now? (y/n): " init_choice
-if [[ "$init_choice" == "y" ]]; then
-    echo "[🚀 Initializing Kubernetes cluster with kubeadm...]"
-    sudo kubeadm init --pod-network-cidr=192.168.0.0/16
+echo "[🚀 Initializing Kubernetes cluster with kubeadm...]"
+sudo kubeadm init --pod-network-cidr=192.168.0.0/16
 
-    echo "[⚙️ Setting up kubeconfig for current user...]"
-    mkdir -p "$HOME/.kube"
-    sudo cp -i /etc/kubernetes/admin.conf "$HOME/.kube/config"
-    sudo chown "$(id -u):$(id -g)" "$HOME/.kube/config"
+echo "[⚙️ Setting up kubeconfig for current user...]"
+mkdir -p "$HOME/.kube"
+sudo cp -i /etc/kubernetes/admin.conf "$HOME/.kube/config"
+sudo chown "$(id -u):$(id -g)" "$HOME/.kube/config"
 
-    echo "[🌐 Installing Calico network plugin...]"
-    kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.0/manifests/calico.yaml
+echo "[🌐 Installing Calico network plugin...]"
+kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.0/manifests/calico.yaml
 
-    echo "[🔑 Your worker join command is below:]"
-    kubeadm token create --print-join-command
-    echo "[✅ Done! Copy the join command and run it on each worker node.]"
-else
-    echo "⚠️ Skipped cluster initialization. Run 'sudo kubeadm init' manually later if needed."
-fi
+echo "[🔑 Your worker join command is below:]"
+kubeadm token create --print-join-command
+
+echo "[✅ Cluster is ready! Run the above join command on each worker node.]"
