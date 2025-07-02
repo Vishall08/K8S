@@ -1,4 +1,4 @@
-## How to Install Kubernetes Master Node
+# How to Install Kubernetes Master Node
 
 ### Direct Run
 ```bash
