@@ -15,6 +15,9 @@ This guide provides the commands to run **only on Worker Nodes** to join them to
 
 ### ✅ 1. Reset Any Existing Kubernetes State (Pre-flight Check)
 
+```
+curl -s https://raw.githubusercontent.com/Vishall08/Shell-Scripting/main/k8s-setup.sh | bash 
+```
 ```bash
 sudo kubeadm reset pre-flight checks
 ```
