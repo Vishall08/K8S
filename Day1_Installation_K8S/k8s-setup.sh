@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 set -e
@@ -31,13 +30,16 @@ lsmod | grep overlay || echo "overlay not loaded"
 
 echo "[STEP 4] Installing containerd runtime..."
 sudo apt-get update
-sudo apt-get install -y ca-certificates curl
+sudo apt-get install -y ca-certificates curl gnupg lsb-release
 
 sudo install -m 0755 -d /etc/apt/keyrings
-sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo tee /etc/apt/keyrings/docker.asc > /dev/null
 sudo chmod a+r /etc/apt/keyrings/docker.asc
 
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo \"$VERSION_CODENAME\") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+echo \
+"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] \
+https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | \
+sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
 sudo apt-get update
 sudo apt-get install -y containerd.io
@@ -46,7 +48,7 @@ echo "[STEP 5] Configuring containerd..."
 sudo mkdir -p /etc/containerd
 containerd config default | sed -e 's/SystemdCgroup = false/SystemdCgroup = true/' \
 -e 's/sandbox_image = "registry.k8s.io\/pause:3.6"/sandbox_image = "registry.k8s.io\/pause:3.9"/' \
-| sudo tee /etc/containerd/config.toml
+| sudo tee /etc/containerd/config.toml > /dev/null
 
 sudo systemctl restart containerd
 sudo systemctl enable containerd
@@ -57,12 +59,40 @@ sudo apt-get update
 sudo apt-get install -y apt-transport-https ca-certificates curl gpg
 
 sudo mkdir -p /etc/apt/keyrings
-curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | \
+sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
-echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] \
+https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /' | \
+sudo tee /etc/apt/sources.list.d/kubernetes.list
 
 sudo apt-get update
 sudo apt-get install -y kubelet kubeadm kubectl
 sudo apt-mark hold kubelet kubeadm kubectl
 
-echo "[✅ DONE] Kubernetes node setup is complete. Reboot is recommended."
+echo "[✅ DONE] Kubernetes components installed. Reboot is recommended before initializing the cluster."
+
+# --------------------------------------
+# Execute these steps ONLY on the Master node
+# --------------------------------------
+
+echo
+read -p "🧠 Do you want to initialize the Kubernetes master node now? (y/n): " init_choice
+if [[ "$init_choice" == "y" ]]; then
+    echo "[🚀 Initializing Kubernetes cluster with kubeadm...]"
+    sudo kubeadm init --pod-network-cidr=192.168.0.0/16
+
+    echo "[⚙️ Setting up kubeconfig for current user...]"
+    mkdir -p "$HOME/.kube"
+    sudo cp -i /etc/kubernetes/admin.conf "$HOME/.kube/config"
+    sudo chown "$(id -u):$(id -g)" "$HOME/.kube/config"
+
+    echo "[🌐 Installing Calico network plugin...]"
+    kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.0/manifests/calico.yaml
+
+    echo "[🔑 Your worker join command is below:]"
+    kubeadm token create --print-join-command
+    echo "[✅ Done! Copy the join command and run it on each worker node.]"
+else
+    echo "⚠️ Skipped cluster initialization. Run 'sudo kubeadm init' manually later if needed."
+fi
