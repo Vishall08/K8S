@@ -2,7 +2,7 @@
 
 ### Direct Run
 ```bash
-curl -s https://raw.githubusercontent.com/Vishall08/K8S/Day1_Installation_K8S/k8s-setup.sh | bash
+curl -s https://raw.githubusercontent.com/Vishall08/K8S/main/Day1_Installation_K8S/k8s-setup.sh | bash
 ```
 
 # Kubernetes Worker Node Join Instructions
