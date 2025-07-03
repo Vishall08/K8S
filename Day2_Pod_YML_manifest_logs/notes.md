@@ -1,5 +1,5 @@
-Pod Management, YAML Manifest, Logs
-##🔧 Useful Commands
+# Pod Management, YAML Manifest, Logs
+## 🔧 Useful Commands
 ```
 sudo systemctl restart kubelet       # Restart kubelet daemon
 kubectl get nodes                    # Check cluster nodes
@@ -10,7 +10,7 @@ kubectl exec -it mypod -- /bin/bash  # Access pod terminal
 kubectl logs mypod                   # View logs of pod
 ```
 
-##📄 Example: Nginx Pod Manifest – mykubefile.yml
+## 📄 Example: Nginx Pod Manifest – mykubefile.yml
 ```
 apiVersion: v1
 kind: Pod
@@ -28,7 +28,7 @@ kubectl apply -f mykubefile.yml
 kubectl get pods
 ```
 
-##📄 Example: MySQL Pod with Env – mydb.yml
+## 📄 Example: MySQL Pod with Env – mydb.yml
 ```
 apiVersion: v1
 kind: Pod
@@ -47,7 +47,7 @@ spec:
 ```
 kubectl apply -f mydb.yml
 ```
-##❌ Delete Pods
+## ❌ Delete Pods
 ```
 kubectl delete pod mypod
 kubectl delete pod mynginxpod
