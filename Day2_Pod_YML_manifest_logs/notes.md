@@ -1,4 +1,4 @@
-#📅 Day 3 – Pod Management, YAML Manifest, Logs
+📅 #Day 3 – Pod Management, YAML Manifest, Logs
 ##🔧 Useful Commands
 ```
 sudo systemctl restart kubelet       # Restart kubelet daemon
