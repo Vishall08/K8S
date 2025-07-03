@@ -1,4 +1,4 @@
-#Pod Management, YAML Manifest, Logs
+Pod Management, YAML Manifest, Logs
 ##🔧 Useful Commands
 ```
 sudo systemctl restart kubelet       # Restart kubelet daemon
