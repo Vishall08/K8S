@@ -1,21 +1,21 @@
-#K8S Pod Management
+# K8S Pod Management
 
 
-##🔧 Basic Node and Pod Commands
+## 🔧 Basic Node and Pod Commands
 ```
 sudo systemctl restart kubelet         # Restart kubelet service
 kubectl get nodes                      # List all nodes in the cluster
 kubectl get pods -A                    # List all pods across all namespaces
 
 ```
-##🚀 Run Pod Using kubectl
+## 🚀 Run Pod Using kubectl
 ```
 kubectl run mypod --image=nginx        # Create a pod named 'mypod' with nginx image
 kubectl get pods -o wide               # Show pods with additional info (like IP, node, etc.)
 kubectl exec -it mypod -- /bin/bash    # Access pod shell (interactive terminal)
 
 ```
-##📦 Create Pod via YAML (mykubefile.yml)
+## 📦 Create Pod via YAML (mykubefile.yml)
 ```
 # mykubefile.yml
 apiVersion: v1
@@ -29,18 +29,18 @@ spec:
       ports:
         - containerPort: 80
 ```
-##Apply and check status:
+## Apply and check status:
 
 ```
 kubectl apply -f mykubefile.yml
 kubectl get pods
 ```
-##📄 View Logs
+## 📄 View Logs
 ```
 kubectl logs mypod
 kubectl logs mynginxpod
 ```
-##📦 MySQL Pod Configuration (mydb.yml)
+## 📦 MySQL Pod Configuration (mydb.yml)
 ```
 # mydb.yml
 apiVersion: v1
@@ -57,12 +57,12 @@ spec:
         - name: MYSQL_ROOT_PASSWORD
           value: Pass@123
 ```
-##Apply:
+## Apply:
 
 ```
 kubectl apply -f mydb.yml
 ```
-##❌ Delete Pods
+## ❌ Delete Pods
 ```
 kubectl delete pod mypod
 kubectl delete pod mynginxpod
